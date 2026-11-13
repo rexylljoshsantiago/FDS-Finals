@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FDS Finals Exam: Normalization</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#16221d;--mute:#5d6b64;--line:#d3ddd7;--acc:#1f5f4a;--ok:#1e9e55;--okbg:#d9f4e3;--bad:#d6453d;--badbg:#fbe0de;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1713;--card:#18231d;--ink:#e6efe9;--mute:#9bab a2;--mute:#9baba2;--line:#2c3b33;--acc:#6fcba7;--ok:#37c878;--okbg:#14412a;--bad:#ef6b63;--badbg:#4a1f1c}}
+:root[data-theme="dark"]{--bg:#0f1713;--card:#18231d;--ink:#e6efe9;--mute:#9baba2;--line:#2c3b33;--acc:#6fcba7;--ok:#37c878;--okbg:#14412a;--bad:#ef6b63;--badbg:#4a1f1c}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 Georgia,"Times New Roman",serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 20px;font-family:system-ui,sans-serif;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:0 0 8px}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+.meta{display:flex;justify-content:space-between;font:600 .85rem system-ui,sans-serif;color:var(--mute);margin-bottom:16px}
+.q{font-size:1.2rem;margin:0 0 18px;line-height:1.4}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:1rem;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 10px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--acc)}
+.opt:focus-visible,button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.bad{background:var(--badbg);border-color:var(--bad)}
+.fb{min-height:1.5em;font:600 .95rem system-ui,sans-serif;margin:6px 0 14px}
+.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}.fb.sk{color:var(--mute)}
+.row{display:flex;gap:10px;justify-content:space-between}
+.btn{font:600 1rem system-ui,sans-serif;border-radius:8px;padding:11px 20px;border:2px solid var(--acc);cursor:pointer}
+.btn.p{background:var(--acc);color:var(--bg)}
+.btn.s{background:transparent;color:var(--acc)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.big{font:700 2.6rem system-ui,sans-serif;margin:4px 0}
+.key{margin-top:22px}
+.ki{border-top:1px solid var(--line);padding:14px 0}
+.ki p{margin:0 0 6px}
+.ans{display:inline-block;background:var(--okbg);border:1px solid var(--ok);border-radius:6px;padding:4px 9px;font-size:.95rem}
+.tag{font:600 .8rem system-ui,sans-serif;margin-left:6px}
+.tag.ok{color:var(--ok)}.tag.bad{color:var(--bad)}.tag.sk{color:var(--mute)}
+.yours{font-size:.9rem;color:var(--mute);margin:4px 0 0}
+.wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<main>
+<h1>Fundamentals of Database System: Finals</h1>
+<p class="sub">Chapter 8: Normalization, Denormalization and XAMPP</p>
+<div id="app" class="card"></div>
+</main>
+<script>
+// [correct answer, wrong, wrong, wrong] after the question text
+const Q=[
+["What occurs when one attribute uniquely determines another attribute within a relation?","Functional dependency","Normalization","Denormalization","Candidate key"],
+["If attribute A functionally determines attribute B we write this as:","A → B","B → A","A = B","A ← B"],
+["In the notation A → B, what does A represent?","The attribute that determines","The attribute that depends on it","The primary key only","The foreign key"],
+["Why is StudentID → Name a valid functional dependency?","Each StudentID is unique.","Each Instructor is unique.","Each CourseID is unique.","Each StudentName is unique."],
+["In the StudentEnrollment table, C1 always corresponds to:","Database Systems","Programming 1","Networking","Prof. Rivera"],
+["Database normalization is the process of organizing the attributes of the database to reduce or eliminate:","data redundancy","data integrity","primary keys","tables"],
+["Data redundancy means:","having the same data but at different places","having no primary key in a table","having only one table in a database","having data that is missing"],
+["Normalization generally involves:","splitting a table into multiple ones","combining tables into a single table","adding redundant data","deleting the database"],
+["The series of rules that normalization follows (like 1NF, 2NF, and 3NF) are called:","normal forms","functional forms","anomaly forms","key forms"],
+["Which anomaly occurs when it is not possible to insert data into a database because the required fields are missing or because the data is incomplete?","Insertion anomalies","Deletion anomalies","Updation anomalies","Transitive anomalies"],
+["Deleting a customer record may also delete all the orders associated with that customer. This is an example of:","Deletion anomalies","Insertion anomalies","Updation anomalies","Partial dependency"],
+["Updating an employee's salary in one record but not in all related records could lead to incorrect calculations and reporting. This is an example of:","Updation anomalies","Insertion anomalies","Deletion anomalies","Transitive dependency"],
+["In the SQL demonstration of the insertion anomaly, the bad table forces you to add:","a fake student","a fake course","a fake instructor","a fake database"],
+["In the update anomaly demonstration, what was the result of the UPDATE on CourseID = 'C1'?","BOTH rows were changed to Prof. Rivera – Mark's record is now wrong (inconsistent data).","Only Ana's row was changed to Prof. Rivera.","The UPDATE failed with an error.","Both rows stayed with Prof. Dela Cruz."],
+["In the delete anomaly demonstration, after deleting CourseID = 'C3', what happened?","the course C3 (Networking) and Prof. Javier are completely LOST","only TEMP STUDENT was removed","the course C3 was moved to another table","Ana Cruz was deleted"],
+["Which of the following is a benefit of using normal forms?","Prevent insert, update, and delete anomalies.","Increase duplicate data and wasted storage.","Make the schema harder to maintain.","Reduce data consistency and integrity."],
+["A table is referred to as being in its First Normal Form if ___ of the table is 1.","atomicity","redundancy","dependency","cardinality"],
+["The First Normal Form disallows:","the multi-valued attribute, composite attribute and their combinations","partial dependencies","transitive dependencies","candidate keys"],
+["Why is Table 1.0 (Customer ID, Customer Name, Purchased Products) not in 1NF?","the product column has two values","the Customer ID column is repeated","the Customer Name column is missing","it has no primary key"],
+["In the candidate key example, which columns are the candidate keys?","Student ID and email","First Name and Last Name","Student ID and Bdate","Last Name and Bdate"],
+["The Primary Key is:","The candidate key chosen to identify records (subset of the Super Key).","A set of columns that cannot identify a record uniquely.","A key that is never used in a table.","A column that holds multiple values."],
+["In the Super Key example, which column is not part of the super key?","Bdate","Student ID","email","First Name"],
+["A table is in 2NF if it is in 1NF and every non-prime attribute is:","fully functionally dependent on the entire primary key","partially dependent on the primary key","transitively dependent on another non-key attribute","atomic only"],
+["Second Normal Form addresses:","partial dependencies","transitive dependencies","multi-valued attributes","composite attributes"],
+["In the 1NF table with Order ID (PK), which is the partial dependency?","Customer ID → First Name, Last Name","Order ID → Product","Order ID → Customer ID","Product → Supplier"],
+["A table is in 3NF if it is in 2NF and there are no:","transitive dependencies","partial dependencies","atomic values","candidate keys"],
+["In the 3NF example table (Order ID, Customer ID, Product, Supplier), what is the transitive dependency?","Product → Supplier","Order ID → Product","Order ID → Customer ID","Customer ID → Product"],
+["How do you normalize the table to 3NF?","Move product and supplier information to separate tables.","Separate customer information into its own table.","Add redundant data to the Orders table.","Split the product column into two values."],
+["Denormalization is a database optimization technique where:","redundant data is intentionally added to one or more tables to reduce the need for complex joins and improve query performance","redundant data is removed from all tables","a table is split into multiple ones","multi-valued attributes are made atomic"],
+["Which is a disadvantage of denormalization?","Reduced data integrity","Improved query performance","Improved read performance","Better scalability"],
+["What does XAMPP stand for?","Cross-platform Apache MariaDB PHP Perl","Cross-platform Apache MySQL PHP Python","Cross-server Apache MariaDB PHP Perl","Cross-platform Apache MongoDB PHP Perl"],
+["In XAMPP, what is the function of APACHE?","Handles web requests. Runs websites on a local server.","Stores and manages database information.","Processes server-side scripts. Creates dynamic website content.","Provides a web-based interface for managing databases."],
+["In XAMPP, what is the function of MARIADB?","Stores and manages database information.","Handles web requests. Runs websites on a local server.","Supports scripting and programming tasks.","Provides a web-based interface for managing databases."],
+["In XAMPP, what is the function of PHPMYADMIN?","Provides a web-based interface for managing databases.","Processes server-side scripts. Creates dynamic website content.","Supports scripting and programming tasks.","Handles web requests. Runs websites on a local server."],
+["What is the order to remember in the steps of normalization?","Unnormalized → 1NF (atomic) → 2NF (no partial dependency) → 3NF (no transitive dependency) → optional Denormalization (for speed)","Unnormalized → 3NF (no transitive dependency) → 2NF (no partial dependency) → 1NF (atomic) → optional Denormalization (for speed)","1NF (atomic) → Unnormalized → 2NF (no partial dependency) → 3NF (no transitive dependency) → optional Denormalization (for speed)","Unnormalized → 2NF (no partial dependency) → 1NF (atomic) → 3NF (no transitive dependency) → optional Denormalization (for speed)"],
+["Functional dependencies are used to mathematically express relations among:","database entities","web servers","user interfaces","SQL commands"],
+["Functional dependency states the relationship between:","two sets of attributes","two databases","two primary keys","two web servers"],
+["Why is CourseCode → CourseName a valid functional dependency?","The same CourseCode will never have two different course names.","The same StudentID will never have two different course names.","Each Instructor teaches only one course.","Each CourseName is stored only once per student."],
+["The primary objective for normalizing the relations is to eliminate:","anomalies","tables","primary keys","joins"],
+["Instead of having a single table with a customer's address repeated for every order they make, you would create:","a separate “Customers” table with the address and link it to an “Orders” table","a single table with all orders and addresses","a separate “Products” table linked to “Suppliers”","a denormalized table with repeated addresses"],
+["The goal of following normal forms is to have each table represent:","a single subject, like a customer or an order","multiple subjects in one table","all the data of the database","only the primary key"],
+["In 1NF, atomicity states that:","a single cell cannot hold multiple values","a table cannot have a primary key","a column cannot be repeated","a table cannot have foreign keys"],
+["After applying 1NF to Table 1.0, you achieved:","atomicity and also every column has unique values","no partial dependencies","no transitive dependencies","denormalization"],
+["What is the issue in the 1NF table with Order ID (PK) before 2NF?","“Customer Name” depends only on “Customer ID”, not the full primary key (“Order ID”).","“Product” depends only on “Supplier”, not the full primary key.","“Customer ID” has multiple values in one cell.","“Order ID” depends on “Product”."],
+["How do you normalize the 1NF Orders table to 2NF?","Separate customer information into its own table.","Move product and supplier information to separate tables.","Combine all tables into one.","Split the product column into two values."],
+["A table is in 3NF if it is in 2NF and all the attributes are functionally dependent only on:","the primary key","a non-key attribute","part of a composite key","the foreign key"],
+["In the 3NF example, why is Supplier an issue?","“Supplier” depends on “Product”, not directly on the primary key.","“Supplier” depends on “Order ID” only.","“Supplier” has multiple values in one cell.","“Supplier” depends on part of a composite key."],
+["Denormalization is:","not the opposite of normalization, but rather an optimization applied after normalization","the exact opposite of normalization and applied before it","the same as normalization","a process that removes all joins permanently"],
+["In the unnormalized table, what happens if “Mr. Smith” changes to “Mr. Brown”?","We have to update multiple rows. Missing one row could lead to inconsistencies.","Only the Classes table needs to be updated.","The change automatically reflects everywhere.","The Students table must be deleted."],
+["What is XAMPP?","a free and open-source cross-platform web server solution","a paid cloud database service","a programming language","a web browser extension"]
+];
+const app=document.getElementById('app');
+let items,i,score,log;
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+let timer;
+function start(){
+  clearTimeout(timer);
+  items=shuffle(Q).map(q=>({q:q[0],ans:q[1],opts:shuffle(q.slice(1))}));
+  i=0;score=0;log=[];
+  app.innerHTML=`<p class="q">${Q.length} multiple-choice questions based on the reviewer. Pick an answer to score a point, or skip a question to see its answer.</p><button class="btn p" id="go">Start exam</button>`;
+  document.getElementById('go').onclick=show;
+}
+function show(){
+  clearTimeout(timer);
+  if(i>=items.length)return finish();
+  const it=items[i];
+  app.innerHTML=`<div class="bar"><i style="width:${i/items.length*100}%"></i></div>
+  <div class="meta"><span>Question ${i+1} of ${items.length}</span><span id="sc">Score: ${score}</span></div>
+  <p class="q">${esc(it.q)}</p>
+  <div id="opts">${it.opts.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div>
+  <div class="fb" id="fb" aria-live="polite"></div>
+  <div class="row"><button class="btn s" id="skip">Skip</button><button class="btn p" id="next" disabled>${i==items.length-1?'See results':'Next'}</button></div>`;
+  const btns=[...document.querySelectorAll('.opt')];
+  const lock=()=>btns.forEach(b=>{b.disabled=true;if(b.textContent===it.ans)b.classList.add('ok')});
+  const fin=()=>{document.getElementById('skip').disabled=true;document.getElementById('next').disabled=false;document.getElementById('next').focus()};
+  btns.forEach(b=>b.onclick=()=>{
+    const pick=b.textContent,right=pick===it.ans;
+    lock();
+    if(right){score++;document.getElementById('sc').textContent='Score: '+score}else b.classList.add('bad');
+    const f=document.getElementById('fb');f.className='fb '+(right?'ok':'bad');f.textContent=right?'Correct! +1 point':'Wrong. The correct answer is highlighted in green.';
+    log.push({q:it.q,ans:it.ans,pick,st:right?'ok':'bad'});fin();
+  });
+  document.getElementById('skip').onclick=()=>{
+    lock();
+    const f=document.getElementById('fb');f.className='fb sk';f.textContent='Skipped. The correct answer is highlighted in green.';
+    log.push({q:it.q,ans:it.ans,pick:null,st:'sk'});
+    document.getElementById('skip').disabled=true;
+    timer=setTimeout(()=>{i++;show()},2000);
+  };
+  document.getElementById('next').onclick=()=>{i++;show()};
+}
+function finish(){
+  const n=items.length,pct=Math.round(score/n*100);
+  const sk=log.filter(l=>l.st==='sk').length,wr=log.filter(l=>l.st==='bad').length;
+  app.innerHTML=`<div class="bar"><i style="width:100%"></i></div>
+  <p class="meta">Exam complete</p>
+  <div class="big">${score} / ${n}</div>
+  <p class="q">${pct}% correct. ${wr} wrong, ${sk} skipped.</p>
+  <button class="btn p" id="again">Retake exam</button>
+  <div class="key"><h2 style="font-size:1.2rem;margin:0 0 4px">Answer key</h2>
+  ${log.map((l,k)=>`<div class="ki"><p>${k+1}. ${esc(l.q)}<span class="tag ${l.st}">${l.st==='ok'?'Correct':l.st==='bad'?'Wrong':'Skipped'}</span></p>
+  <span class="ans">${esc(l.ans)}</span>${l.st==='bad'?`<p class="yours">Your answer: ${esc(l.pick)}</p>`:''}</div>`).join('')}</div>`;
+  document.getElementById('again').onclick=start;
+  window.scrollTo(0,0);
+}
+start();
+</script>
+</body>
+</html>
